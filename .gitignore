@@ -1,0 +1,17 @@
+output/
+outputs/
+/data/
+/index.html
+index.html.tmp
+node_modules/
+templates/
+.codex/
+tmp/
+docs/
+
+# Legacy personal images; public fonts and placeholder artwork remain tracked.
+/assets/photo.jpg
+/assets/logo.svg
+.env
+.env.local
+npm-debug.log*

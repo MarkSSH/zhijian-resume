@@ -1,0 +1,322 @@
+/* 英文和数字优先使用 Georgia；中文回退到本机中文字体。 */
+:root {
+  color-scheme: light;
+  --font-body: Georgia, "Times New Roman", "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --font-heading: Georgia, "Microsoft YaHei", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+  --ink: #282e36;
+  --accent: #30455e;
+  --muted: #68727e;
+  --line: #d5dbe2;
+  --soft: #f1f3f6;
+  --paper-width: 210mm;
+  --paper-height: 297mm;
+}
+
+* { box-sizing: border-box; }
+html { margin: 0; background: #f1f2f4; }
+body {
+  margin: 0;
+  padding: 26px 24px 40px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, p, ul, ol, dl, dd { margin: 0; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 1px; }
+strong { font-weight: 700; }
+.icon-definitions { position: absolute; width: 0; height: 0; overflow: hidden; }
+.icon, .section-icon {
+  display: inline-block;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.icon { width: 12px; height: 12px; color: var(--accent); }
+.workspace-note {
+  width: var(--paper-width);
+  max-width: 100%;
+  margin: 0 auto 13px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #697380;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+.workspace-note > span:first-child { display: inline-flex; align-items: center; gap: 8px; }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; background: #6d7b8f; }
+.note-divider { color: #a0a7b0; }
+.resume-page {
+  position: relative;
+  width: var(--paper-width);
+  min-height: var(--paper-height);
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 32px 42px 22px;
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-top: 4px solid var(--accent);
+  box-shadow: 0 12px 45px rgb(35 41 50 / 7%), 0 1px 3px rgb(35 41 50 / 5%);
+}
+.resume-header {
+  display: grid;
+  grid-template-columns: 88px minmax(0, 1fr) 88px;
+  align-items: center;
+  column-gap: 14px;
+  padding-bottom: 19px;
+  margin-bottom: 17px;
+  border-bottom: 1.5px solid var(--accent);
+}
+.school-mark { display: flex; align-items: center; justify-content: center; }
+.school-emblem { width: 88px; height: 88px; display: block; overflow: hidden; }
+.profile { min-width: 0; text-align: center; }
+.profile h1, .profile-name {
+  color: var(--accent);
+  font-family: var(--font-heading);
+  font-size: 29px;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: 5px;
+  text-indent: 5px;
+  margin-bottom: 7px;
+}
+.profile-subtitle { font-size: 12px; margin-bottom: 8px; letter-spacing: .35px; }
+.separator { color: #a4acb7; padding: 0 6px; }
+.contact-line { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 3px 13px; font-size: 11px; }
+.contact-line > * { display: inline-flex; align-items: center; gap: 5px; }
+.profile-personal { color: var(--muted); margin-top: 5px; font-size: 10.5px; }
+.portrait { display: flex; justify-content: flex-end; }
+.portrait img { display: block; width: 82px; height: 112px; object-fit: cover; object-position: center; border: 1px solid #e0e3e8; border-radius: 2px; }
+.resume-section { margin-bottom: 14px; }
+.section-heading { display: flex; align-items: center; gap: 11px; margin-bottom: 8px; }
+.section-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+  color: var(--accent);
+  font-family: var(--font-heading);
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 1px;
+}
+.section-icon { width: 19px; height: 19px; }
+.section-rule { flex: 1; height: 1px; background: var(--line); }
+.section-english { color: #818b99; font-size: 8px; letter-spacing: 1.5px; }
+.section-content { padding-left: 2px; }
+.entry-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; }
+.entry-heading h3 { font-family: var(--font-heading); font-size: 12.5px; line-height: 1.65; font-weight: 700; }
+.entry-heading time { flex-shrink: 0; color: var(--muted); font-size: 10.5px; white-space: nowrap; }
+.degree { display:inline; margin-left:9px; color:var(--accent); background:none; border:0; padding:0; font-size:.98em; font-weight:700; letter-spacing:.25px; }
+.school-label { display:inline; margin-left:6px; color:var(--accent); background:var(--soft); border:1px solid #c5cfdb; padding:0 4px; font-size:10.5px; font-weight:700; border-radius:2px; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+.education-entry + .education-entry { margin-top: 6px; }
+.education-detail { margin-top: 1px; }
+.entry-note { color: var(--muted); font-size: 11px; }
+.detail-divider { color: #b0b8c1; padding: 0 6px; }
+.project-entry + .project-entry { margin-top:18px; padding-top:0; border-top:0; }
+.project-entry .entry-heading h3,.project-entry .layout-heading { color:var(--accent); }
+.project-entry [data-path$=".title"] { position:relative; }
+.project-entry [data-path$=".title"]::before { content:''; position:absolute; left:-9px; top:.32em; width:3px; height:.85em; border-radius:2px; background:var(--accent); }
+.project-meta { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; color: var(--muted); font-size: 10.5px; margin: 2px 0 3px; }
+.role-label { color: var(--accent); border-left: 2px solid #b7c3d1; padding-left: 6px; }
+.detail-list { padding-left: 14px; }
+.detail-list li { padding-left: 1px; }
+.detail-list li::marker { color: #71829b; font-size: 8px; }
+.detail-list li + li { margin-top: 2px; }
+.subsection-heading { font-family: var(--font-heading); color: var(--accent); font-size: 11.5px; font-weight: 700; line-height: 1.6; margin-bottom: 4px; }
+.subsection-heading span { color: #87919e; font-size: 8px; font-weight: 400; letter-spacing: 1.1px; margin-left: 7px; }
+.publications { list-style: none; padding: 0; counter-reset: publication; }
+.publications li { display: flex; gap: 7px; counter-increment: publication; font-size: 11.5px; line-height: 1.5; }
+.publications li > div { min-width: 0; overflow-wrap: anywhere; }
+.publications li::before { content: "[" counter(publication) "]"; color: var(--accent); flex: 0 0 16px; font-size: 11px; padding-top: 1px; }
+.publications li + li { margin-top: 7px; }
+.publication-note { display: block; color: var(--muted); font-size: 10.5px; margin-top: 2px; }
+.status-tag { display: inline-block; color: #3e5067; border: 1px solid #c9d3df; font-size: 9px; font-weight: 600; line-height: 1.55; padding: 0 4px; margin-left: 6px; vertical-align: 1px; border-radius: 2px; white-space: nowrap; }
+.status-pending { color: #775a37; border-color: #dfceb6; }
+.author-note { padding-left: 8px; }
+.patent-group { margin-top: 12px; }
+.patent-title { font-size: 11.5px; }
+.patents-list { padding-left: 22px; }
+.patents-list > li { padding-left: 1px; }
+.patents-list > li::marker { color: var(--accent); font-size: 11px; }
+.patents-list > li + li { margin-top: 7px; }
+.patent-authors { font-size: 11px; }
+.awards-list { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); align-items:start; gap:3px 16px; padding:0 0 0 2px; list-style:none; }
+.awards-list>li { position:relative; min-width:0; padding-left:12px; break-inside:avoid; }
+.awards-list>li::before { content:''; position:absolute; left:1px; top:.7em; width:4px; height:4px; background:var(--accent); transform:rotate(45deg); }
+.pending-content { color: #78828e; font-size: 11px; }
+.campus-list article + article { margin-top: 7px; }
+.skills-list > div { display: grid; grid-template-columns: 79px minmax(0, 1fr); gap: 7px; }
+.skills-list > div + div { margin-top: 2px; }
+.skills-list dt { color: var(--accent); font-weight: 700; }
+.skills-list dd { min-width: 0; }
+.entry-role { margin-left:8px; color:var(--accent); font-size:.96em; font-weight:700; }
+.campus-description { margin-top: 3px; }
+.evaluation-section { margin-bottom: 14px; }
+.evaluation { color: #4d596a; }
+.resume-footer { display: flex; justify-content: space-between; align-items: center; color: #85909d; font-size: 8px; letter-spacing: .6px; border-top: 1px solid #e1e5eb; padding-top: 9px; margin-top: auto; }
+.resume-footer > span:last-child { color: var(--accent); font-size: 8px; letter-spacing: 1px; }
+
+/* 使用 A4 页宽、自然长页承载全部资料；手机上重新换行。 */
+@media screen and (max-width: 650px) {
+  body { padding: 15px 10px 24px; }
+  .resume-page { padding: 24px 20px 19px; min-height: 0; }
+  .resume-header { grid-template-columns: 56px minmax(0, 1fr) 56px; gap: 9px; margin-bottom: 17px; padding-bottom: 17px; }
+  .school-emblem { width: 54px; height: 54px; }
+  .portrait img { width: 54px; height: 74px; }
+  .profile h1,.profile-name { font-size: 25px; letter-spacing: 3px; margin-bottom: 6px; }
+  .profile-subtitle { font-size: 10px; margin-bottom: 6px; }
+  .contact-line { font-size: 9.5px; gap: 2px; flex-direction: column; }
+  .profile-personal { font-size: 9px; margin-top: 5px; }
+  .profile-personal .separator { padding: 0 3px; }
+  .resume-section { margin-bottom: 20px; }
+  .entry-heading { flex-wrap: wrap; gap: 1px 8px; }
+  .entry-heading time { font-size: 10px; }
+  .section-heading { gap: 8px; }
+  .section-english { font-size: 7px; letter-spacing: .8px; }
+  .skills-list > div { grid-template-columns: 1fr; gap: 0; }
+  .skills-list > div + div { margin-top: 6px; }
+  .detail-divider { padding: 0 3px; }
+  .resume-footer { font-size: 7px; }
+}
+
+@media screen and (max-width: 380px) {
+  .resume-page { padding-right: 15px; padding-left: 15px; }
+  .resume-header { grid-template-columns: 45px minmax(0, 1fr) 45px; gap: 7px; }
+  .school-emblem { width: 44px; height: 44px; }
+  .portrait img { width: 44px; height: 60px; }
+  .section-english { display: none; }
+}
+
+@page { size: A4; margin: 32px 0 20px; }
+/* Keep the first-page accent at the paper edge; its reading margin is inside the page. */
+@page :first { margin-top: 0; }
+@media print {
+  html, body { background: #fff; }
+  body { padding: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .workspace-note { display: none; }
+  .resume-page { max-width: none; margin: 0; box-shadow: none; }
+  .resume-header, .education-entry, .project-entry, .publications li, .patents-list li, .campus-list article, .skills-list > div { break-inside: avoid; }
+  .section-heading, .subsection-heading { break-after: avoid; }
+  a { text-decoration: none; }
+}
+
+/* Shared spacing controls keep the editor, offline HTML and PDF consistent. */
+.resume-page { padding-top:max(12px,calc(var(--resume-vertical-margin,32px) - 12px)); padding-bottom:var(--resume-bottom-margin,20px); }
+.resume-header { padding-bottom:calc(19px * var(--resume-spacing,1)); margin-bottom:calc(17px * var(--resume-spacing,1)); }
+.section-heading { margin-bottom:calc(8px * var(--resume-spacing,1)); }
+.education-entry+.education-entry { margin-top:calc(6px * var(--resume-spacing,1)); }
+.project-entry+.project-entry { margin-top:max(11px,calc(18px * var(--resume-spacing,1))); }
+.publications li+li,.patents-list>li+li,.campus-list article+article { margin-top:calc(7px * var(--resume-spacing,1)); }
+.patent-group { margin-top:calc(12px * var(--resume-spacing,1)); }
+
+/* 编辑器保存的版式参数，同时用于静态 HTML。 */
+.resume-page { background: var(--editor-paper, #fff); padding-left: var(--resume-margin, 42px); padding-right: var(--resume-margin, 42px); font-size: var(--resume-font-size, 12px); line-height: var(--resume-line-height, 1.65); }
+.resume-header { grid-template-columns: var(--header-side, 88px) minmax(0, 1fr) var(--header-side, 88px); }
+.school-emblem { width: var(--resume-logo-size, 88px); height: var(--resume-logo-size, 88px); object-fit: contain; }
+.portrait img { width: var(--resume-photo-width, 82px); height: var(--resume-photo-height, 112px); }
+.resume-section { margin-bottom: var(--resume-section-gap, 14px); }
+/* The last module only needs a small gap before the footer, not a full section gap. */
+.resume-page>.resume-section:last-of-type { margin-bottom:6px; }
+.resume-footer { margin-top:0; padding-top:5px; line-height:1.4; }
+.resume-page .entry-heading h3 { font-size: 1.04em; }
+.resume-page .education-detail,.resume-page .multiline-text { font-size: 1em; }
+.resume-page .entry-note,.resume-page .pending-content { font-size: .92em; }
+.resume-page .publications li { font-size: .96em; line-height: var(--resume-line-height, 1.65); }
+.resume-page .publication-note { font-size: 1em; }
+.resume-page .patent-title { font-size: .96em; }
+.resume-page .patent-authors { font-size: .92em; }
+.resume-page .publications li::before { display: none; }
+.publication-number { flex: 0 0 16px; color: var(--accent); }
+.multiline-text { white-space: pre-line; margin-top: 3px; overflow-wrap: anywhere; }
+.entry-heading { flex-wrap: wrap; }
+.entry-heading h3 { min-width: 0; overflow-wrap: anywhere; }
+.resume-page [data-path] { overflow-wrap: anywhere; white-space: pre-wrap; }
+.resume-page .field-block { display: block; }
+.resume-page .rich-list { display:block; white-space:normal; padding-left:18px; counter-reset:rich-item; }
+.rich-line { display:block; position:relative; white-space:pre-wrap; }
+.rich-line::before { position:absolute; right:calc(100% + 5px); color:currentColor; }
+.list-bullet>.rich-line::before { content:'•'; }
+.list-numbered>.rich-line { counter-increment:rich-item; }
+.list-numbered>.rich-line::before { content:counter(rich-item) '.'; }
+.field-layout { width:100%; min-width:0; }
+.field-row { min-width:0; display:block; }
+.field-row+.field-row { margin-top:4px; }
+.field-cell { display:inline; }
+.field-separator { white-space:normal; word-spacing:calc(var(--field-gap,8px) - .25em); }
+.row-split:has(>.field-group) { display:flex; align-items:baseline; gap:var(--field-gap,8px); }
+.field-group { min-width:0; overflow-wrap:anywhere; }
+.group-leading { flex:1 1 0; }
+.group-trailing { flex:0 1 auto; max-width:45%; margin-left:auto; text-align:right; }
+.group-trailing:only-child { max-width:100%; }
+.row-single>.field-cell,.group-single>.field-cell { display:contents; }
+.resume-page .row-joined>.field-cell>.field-block:not(.rich-list),.resume-page .group-joined>.field-cell>.field-block:not(.rich-list) { display:inline; }
+.field-layout .school-label,.field-layout .degree,.field-layout .status-tag,.field-layout .entry-role { margin-left:0; }
+.field-layout .status-tag { white-space:normal; }
+.layout-heading { font-family:var(--font-heading); font-size:1.04em; font-weight:700; }
+.layout-date { color:var(--muted); font-size:10.5px; }
+.layout-meta { color:var(--muted); font-size:10.5px; }
+.layout-meta.role-label { color:var(--accent); }
+.project-keywords,.layout-meta.project-keywords { color:var(--accent); font-size:10.8px; font-weight:600; }
+.project-role { font-weight:600; }
+.layout-skill-category { font-weight:700; }
+.publication-venue { color:var(--accent); font-size:.98em; font-weight:700; }
+.publication-year { color:var(--muted); font-size:.91em; }
+.publication-supplement { color:var(--accent); background:#edf2f5; font-size:.94em; font-weight:600; padding:1px 4px; margin-left:6px; border-radius:2px; box-decoration-break:clone; -webkit-box-decoration-break:clone; }
+.field-layout .publication-supplement { margin-left:0; }
+.publications li>div { flex:1; }
+.profile-layout { text-align:center; }
+.profile-major { font-size:12px; letter-spacing:.35px; }
+.profile-contact { font-size:11px; }
+.profile-personal-text { font-size:10.5px; color:var(--muted); }
+.profile-layout .icon { margin-right:5px; vertical-align:-1px; }
+.profile-information { max-width:430px; margin:10px auto 0; text-align:left; font-size:11px; line-height:1.7; color:var(--ink); }
+.profile-info-row { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); column-gap:var(--field-gap,10px); row-gap:6px; }
+.profile-info-row+.profile-info-row { margin-top:6px; }
+.profile-info-item { display:grid; grid-template-columns:12px 4em 5px minmax(0,1fr); column-gap:5px; align-items:baseline; min-width:0; }
+.profile-field-label { text-align:justify; text-align-last:justify; white-space:nowrap; }
+.profile-field-colon { margin-left:-4px; }
+.profile-field-value { min-width:0; overflow-wrap:anywhere; }
+.profile-value { font-size:inherit; color:inherit; }
+.profile-info-item .icon { width:12px; height:12px; margin:0; align-self:start; margin-top:.27em; color:var(--accent); stroke-width:1.8; }
+.profile-field-value>a { color:inherit; }
+.skills-list>.custom-skill { display:block; }
+.project-body-slot,.project-blocks { display:block; width:100%; min-width:0; }
+.experience-body { display:block; width:100%; min-width:0; padding-left:12px; }
+.project-content-block+.project-content-block { margin-top:5px; }
+.project-block-text { white-space:pre-wrap; overflow-wrap:anywhere; }
+.project-body-slot .pending-content { margin-top:3px; }
+.body-neighbor+.project-body-slot,.project-body-slot+.body-neighbor { margin-top:4px; }
+.body-neighbor+.campus-body-slot,.campus-body-slot+.body-neighbor { margin-top:4px; }
+.field-row+.field-row { margin-top:calc(4px * var(--resume-spacing,1)); }
+.project-content-block+.project-content-block { margin-top:calc(5px * var(--resume-spacing,1)); }
+@media print {
+  html,body { margin:0; padding:0; }
+  .resume-page { display:block; width:210mm; min-height:0; max-width:none; padding-bottom:0; box-shadow:none; }
+  .resume-footer { break-inside:avoid; }
+  .resume-section { break-inside:auto; }
+  .section-heading,.subsection-heading { break-after:avoid-page; }
+  .resume-header,.education-entry,.project-entry,.publications li,.patents-list li,.campus-list article,.skills-list>div { break-inside:avoid-page; }
+  [data-print-split=true] { break-inside:auto!important; }
+  .project-entry .field-row:has(.layout-heading) { break-after:avoid-page; }
+  p,.project-block-text,.rich-line { orphans:2; widows:2; }
+}
+@media screen and (max-width:650px) {
+  .awards-list { grid-template-columns:minmax(0,1fr); }
+  .resume-page { padding-left:20px; padding-right:20px; }
+  .resume-header { grid-template-columns:56px minmax(0,1fr) 56px; }
+  .school-emblem { width:54px; height:54px; }
+  .portrait img { width:54px; height:74px; }
+  .profile-information { font-size:10px; }
+  .profile-info-row { grid-template-columns:minmax(0,1fr); row-gap:4px; }
+  .profile-info-row+.profile-info-row { margin-top:4px; }
+}

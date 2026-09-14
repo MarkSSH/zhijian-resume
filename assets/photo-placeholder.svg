@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="156" height="208" viewBox="0 0 156 208" fill="none">
+  <title>个人照片占位图</title>
+  <rect width="156" height="208" fill="#eff4f4"/>
+  <path d="M25 0v208M131 0v208M0 25h156M0 183h156" stroke="#e6eeee"/>
+  <circle cx="78" cy="77" r="26" fill="#ccdada"/>
+  <path d="M25 155c1-33 23-48 53-48s52 15 53 48v5H25v-5Z" fill="#ccdada"/>
+  <path d="M11 27V11h16m102 0h16v16M11 181v16h16m102 0h16v-16" stroke="#9db8bd" stroke-width="1.4"/>
+  <text x="78" y="182" text-anchor="middle" fill="#6c888e" font-family="Georgia, Microsoft YaHei, sans-serif" font-size="12" letter-spacing="2">照片占位</text>
+</svg>

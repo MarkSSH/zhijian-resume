@@ -1,0 +1,20 @@
+{
+  "name": "zhijian-resume",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Zhijian — a local-first resume studio with precise layout control and PDF export.",
+  "type": "module",
+  "scripts": {
+    "preview": "node scripts/preview.mjs",
+    "test": "node --test test/*.test.mjs",
+    "start": "node scripts/preview.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1",
+    "playwright-core": "^1.63.0"
+  },
+  "license": "MIT"
+}

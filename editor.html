@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>纸间 Zhijian · 简历编辑器</title>
+  <link rel="stylesheet" href="./app/editor.css">
+  <script type="module" src="./app/editor.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="/#studio" id="back-studio" aria-label="返回简历工作台" title="返回简历工作台"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><strong>纸间</strong><span class="brand-caption">← 我的简历</span></a>
+    <span class="header-divider"></span><span id="document-name" class="document-name">个人简历</span>
+    <div class="header-actions">
+      <span id="save-status" class="save-status" role="status" aria-live="polite">正在载入…</span>
+      <div class="history-actions"><button id="undo" class="icon-button" title="撤销（Ctrl / ⌘ Z）" aria-label="撤销" disabled>↶</button><button id="redo" class="icon-button" title="重做（Ctrl / ⌘ Shift Z）" aria-label="重做" disabled>↷</button></div>
+      <button id="import-button" class="button secondary">导入资料</button>
+      <div class="export-menu"><button id="export-button" class="button secondary" aria-expanded="false">导出 <span aria-hidden="true">⌄</span></button><div id="export-options" class="menu" hidden><button data-export="pdf">PDF 简历 <span>A4 分页，保留可选中文字</span></button><button data-export="json">资料备份 <span>JSON，包含图片</span></button><button data-export="html">网页简历 <span>HTML，可离线打开</span></button><button id="restore-previous">恢复上一版 <span>最近一次保存前的项目资料</span></button></div></div>
+      <button id="preview-toggle" class="button primary">纯净预览 <span aria-hidden="true">↗</span></button>
+    </div>
+  </header>
+  <div id="notice" class="notice" role="alert" hidden></div>
+  <main class="workspace">
+    <aside class="editor-panel" aria-label="编辑面板">
+      <div class="panel-tabs" role="tablist" aria-label="编辑方式"><button class="active" id="content-tab" role="tab" aria-selected="true" aria-controls="panel-body" data-tab="content">内容编辑</button><button id="style-tab" role="tab" aria-selected="false" aria-controls="panel-body" data-tab="style">整体样式</button><button id="local-tab" role="tab" aria-selected="false" aria-controls="panel-body" data-tab="local">局部格式</button><button id="layout-tab" role="tab" aria-selected="false" aria-controls="panel-body" data-tab="layout">字段布局</button></div>
+      <div id="panel-body" class="panel-body" role="tabpanel" aria-labelledby="content-tab"><div class="loading">正在载入你的简历…</div></div>
+      <div class="panel-footer"><span class="local-dot"></span>仅在本机编辑与保存<button id="retry-save" hidden>重试保存</button></div>
+    </aside>
+    <section class="preview-panel" aria-label="实时预览">
+      <div class="preview-toolbar"><div class="preview-label"><span class="small-dot"></span><strong>实时预览</strong><span id="edit-hint">点击文字即可编辑</span></div><div class="view-controls"><button id="fit-two-pages" class="fit-button" disabled title="调整整体间距和字号，按实际 PDF 校验；支持撤销">适配两页 <span aria-hidden="true">↙↗</span></button><label class="guide-control"><input id="guide-toggle" type="checkbox" checked>A4 参考线</label><select id="zoom" aria-label="预览缩放"><option value="fit">适应宽度</option><option value="0.5">50%</option><option value="0.75">75%</option><option value="1">100%</option><option value="1.25">125%</option></select></div></div>
+      <div id="pdf-result" class="pdf-result" role="status" hidden><div><strong id="pdf-result-title"></strong><span id="pdf-result-detail"></span></div><div class="pdf-result-actions"><button id="preview-pdf" hidden>查看分页</button><button id="undo-fit" hidden>撤销调整</button><button id="dismiss-pdf-result" aria-label="收起排版结果">×</button></div></div>
+      <div class="preview-format-bar"><span id="format-target">点击字段或选中文字</span><div><button data-quick-format="fontWeight" aria-label="快速加粗"><b>B</b></button><button data-quick-format="fontStyle" aria-label="快速斜体"><i>I</i></button><button data-quick-format="textDecoration" aria-label="快速下划线"><u>U</u></button><button id="open-local-format">设置格式 ↗</button></div></div>
+      <div id="preview-scroll" class="preview-scroll"><div id="preview-sizer" class="preview-sizer"><div id="preview-surface" class="preview-surface"><iframe id="resume-frame" title="简历实时预览" sandbox="allow-same-origin" src="about:blank"></iframe><div id="page-guides" class="page-guides" aria-hidden="true"></div></div></div></div>
+      <footer class="canvas-footer"><span id="layout-status">正在测量版式…</span><span>A4 页宽 · Georgia</span></footer>
+    </section>
+  </main>
+  <input id="import-file" type="file" accept="application/json,.json" hidden>
+  <input id="image-file" type="file" accept="image/png,image/jpeg,image/webp,image/svg+xml" hidden>
+  <dialog id="confirm-dialog"><form method="dialog"><span class="dialog-eyebrow">资料导入</span><h2>用备份更新当前简历？</h2><p id="import-summary"></p><p class="dialog-note">导入后会自动保存到项目，可以使用撤销恢复。</p><div class="dialog-actions"><button value="cancel" class="button secondary">取消</button><button value="import" class="button primary">导入并预览</button></div></form></dialog>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <dialog id="pdf-dialog" class="pdf-dialog"><div class="pdf-dialog-header"><div><strong>PDF 分页预览</strong><span id="pdf-preview-caption"></span></div><div><button id="download-preview-pdf" class="button primary">下载 PDF</button><button id="close-pdf-preview" class="button secondary">关闭</button></div></div><p class="pdf-dialog-note">这里显示实际导出文件；若浏览器不支持内嵌预览，可直接下载查看。</p><iframe id="pdf-frame" title="PDF 实际分页预览"></iframe></dialog>
+</body>
+</html>

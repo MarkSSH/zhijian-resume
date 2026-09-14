@@ -1,0 +1,192 @@
+{
+  "version": 4,
+  "profile": {
+    "name": "林予安（演示）",
+    "authorName": "Yuan Lin",
+    "major": "计算机科学与技术",
+    "degree": "硕士研究生",
+    "phone": "",
+    "email": "hello@example.com",
+    "politics": "",
+    "birth": "",
+    "nativePlace": "",
+    "ethnicity": "",
+    "extra": "以下学校、人物、项目与成果均为虚构，仅展示排版功能。",
+    "logo": "",
+    "photo": "",
+    "logoMode": "contain",
+    "showLogo": false,
+    "showPhoto": false
+  },
+  "styles": {
+    "accent": "#30455e",
+    "paper": "#ffffff",
+    "fontSize": 12,
+    "lineHeight": 1.65,
+    "sectionGap": 14,
+    "pageMargin": 42,
+    "pageVerticalMargin": 32,
+    "spacingScale": 1,
+    "photoWidth": 82,
+    "logoSize": 88,
+    "chineseFont": "sans",
+    "showEnglish": true,
+    "showPlaceholders": true
+  },
+  "sections": [
+    {
+      "id": "education",
+      "title": "教育背景",
+      "english": "EDUCATION",
+      "visible": true
+    },
+    {
+      "id": "projects",
+      "title": "项目经历",
+      "english": "PROJECTS",
+      "visible": true
+    },
+    {
+      "id": "research",
+      "title": "科研成果",
+      "english": "RESEARCH",
+      "visible": true
+    },
+    {
+      "id": "awards",
+      "title": "荣誉奖项",
+      "english": "AWARDS",
+      "visible": true
+    },
+    {
+      "id": "skills",
+      "title": "个人技能",
+      "english": "SKILLS",
+      "visible": true
+    },
+    {
+      "id": "campus",
+      "title": "学生工作经历",
+      "english": "CAMPUS",
+      "visible": true
+    },
+    {
+      "id": "evaluation",
+      "title": "个人评价",
+      "english": "ABOUT ME",
+      "visible": true
+    }
+  ],
+  "education": [
+    {
+      "id": "entry_demo_education",
+      "school": "示例大学（虚构）",
+      "label": "示例",
+      "degree": "工学硕士",
+      "dates": "2023.09—2026.06",
+      "detail": "计算机学院 · 计算机科学与技术",
+      "note": "研究方向：信息检索与软件工程。"
+    }
+  ],
+  "projects": [
+    {
+      "id": "entry_demo_project_1",
+      "title": "校园知识检索平台（演示项目）",
+      "dates": "2025.03—2025.09",
+      "organization": "示例实验室",
+      "role": "项目开发者",
+      "tech": "Python · FastAPI · Vue",
+      "description": "",
+      "blocks": [
+        {
+          "id": "block_demo_1",
+          "type": "paragraph",
+          "text": "面向课程资料分散、检索不便的场景，设计文档整理与检索工具。此段为项目背景示例。"
+        },
+        {
+          "id": "block_demo_2",
+          "type": "bullet",
+          "text": "检索设计：完成文档解析、索引构建和检索结果展示，让资料能够按主题查找。\n工程实现：拆分上传、搜索和反馈接口，补充异常处理与接口测试。"
+        },
+        {
+          "id": "block_demo_3",
+          "type": "paragraph",
+          "text": "成果表达示例：这里填写你可以核实的实际贡献与结果，不照搬示例经历。"
+        }
+      ]
+    },
+    {
+      "id": "entry_demo_project_2",
+      "title": "个人阅读记录工具（演示项目）",
+      "dates": "2024.07—2024.10",
+      "organization": "个人实践",
+      "role": "独立开发",
+      "tech": "JavaScript · HTML · CSS",
+      "description": "",
+      "blocks": [
+        {
+          "id": "block_demo_4",
+          "type": "bullet",
+          "text": "交互设计：实现阅读条目、标签筛选和笔记编辑。\n数据管理：支持本地保存与 JSON 导入导出，便于备份和迁移。"
+        }
+      ]
+    }
+  ],
+  "publications": [
+    {
+      "id": "entry_demo_paper",
+      "title": "An Example Study of Document Retrieval Interfaces",
+      "authors": "Yuan Lin, Example Author",
+      "venue": "Example Research Journal（虚构期刊）",
+      "year": "2025",
+      "status": "返修（演示）",
+      "supplement": "此条仅演示作者、期刊、状态与补充说明的排版。"
+    }
+  ],
+  "patents": [
+    {
+      "id": "entry_demo_patent",
+      "title": "一种示例文档管理方法（虚构）",
+      "authors": "林予安",
+      "number": "示例编号，不对应真实专利",
+      "date": "2025",
+      "status": "示例"
+    }
+  ],
+  "awards": [
+    {
+      "id": "entry_demo_award_1",
+      "text": "示例大学研究生奖学金（演示）"
+    },
+    {
+      "id": "entry_demo_award_2",
+      "text": "校园软件设计活动优秀作品（演示）"
+    }
+  ],
+  "skills": [
+    {
+      "id": "entry_demo_skill_1",
+      "category": "编程与开发",
+      "detail": "Python、JavaScript；能够完成接口开发、页面交互和测试。"
+    },
+    {
+      "id": "entry_demo_skill_2",
+      "category": "协作与表达",
+      "detail": "使用 Git 管理代码，编写技术文档并整理项目结果。"
+    }
+  ],
+  "campus": [
+    {
+      "id": "entry_demo_campus",
+      "title": "示例大学技术社团",
+      "role": "活动负责人",
+      "dates": "2024.09—2025.06",
+      "organization": "示例大学",
+      "description": "组织技术分享与项目交流，协助成员整理实践成果。"
+    }
+  ],
+  "evaluation": "这是可编辑的演示简历。尝试调整字段顺序、文字样式与内容块，再替换为自己的真实经历。",
+  "format": {},
+  "layouts": {},
+  "sectionStyles": {}
+}
