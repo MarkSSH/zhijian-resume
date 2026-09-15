@@ -1,16 +1,16 @@
 {
-  "version": 4,
+  "version": 6,
   "profile": {
     "name": "林予安（演示）",
     "authorName": "Yuan Lin",
     "major": "计算机科学与技术",
     "degree": "硕士研究生",
-    "phone": "",
+    "phone": "139 0000 0000",
     "email": "hello@example.com",
-    "politics": "",
-    "birth": "",
-    "nativePlace": "",
-    "ethnicity": "",
+    "politics": "共青团员",
+    "birth": "2001.06",
+    "nativePlace": "江苏南京",
+    "ethnicity": "汉族",
     "extra": "以下学校、人物、项目与成果均为虚构，仅展示排版功能。",
     "logo": "",
     "photo": "",
@@ -22,11 +22,11 @@
     "accent": "#30455e",
     "paper": "#ffffff",
     "fontSize": 12,
-    "lineHeight": 1.65,
-    "sectionGap": 14,
-    "pageMargin": 42,
-    "pageVerticalMargin": 32,
-    "spacingScale": 1,
+    "lineHeight": 1.4,
+    "sectionGap": 8,
+    "pageMargin": 33,
+    "pageVerticalMargin": 24,
+    "spacingScale": 0.55,
     "photoWidth": 82,
     "logoSize": 88,
     "chineseFont": "sans",
@@ -53,15 +53,15 @@
       "visible": true
     },
     {
-      "id": "awards",
-      "title": "荣誉奖项",
-      "english": "AWARDS",
+      "id": "internships",
+      "title": "实习经历",
+      "english": "INTERNSHIPS",
       "visible": true
     },
     {
-      "id": "skills",
-      "title": "个人技能",
-      "english": "SKILLS",
+      "id": "awards",
+      "title": "荣誉奖项",
+      "english": "AWARDS",
       "visible": true
     },
     {
@@ -71,9 +71,15 @@
       "visible": true
     },
     {
+      "id": "skills",
+      "title": "个人技能",
+      "english": "SKILLS",
+      "visible": true
+    },
+    {
       "id": "evaluation",
       "title": "个人评价",
-      "english": "ABOUT ME",
+      "english": "PROFILE",
       "visible": true
     }
   ],
@@ -187,6 +193,71 @@
   ],
   "evaluation": "这是可编辑的演示简历。尝试调整字段顺序、文字样式与内容块，再替换为自己的真实经历。",
   "format": {},
-  "layouts": {},
-  "sectionStyles": {}
+  "layouts": {
+    "profile": {
+      "rows": [["name"],["major","degree"],["politics","nativePlace"],["birth","ethnicity"],["phone","email"],["extra"]],
+      "right": [],
+      "gap": 25,
+      "rowModes": ["auto","auto","auto","auto","auto","auto"]
+    },
+    "education:entry_demo_education": {
+      "rows": [["school","label","degree","dates"],["detail"],["note"]],
+      "right": ["dates"],
+      "gap": 8,
+      "rowModes": ["auto","auto","auto"]
+    },
+    "projects:entry_demo_project_1": {
+      "rows": [["title","tech","organization","role","dates"],["description"]],
+      "right": ["dates","role","organization"],
+      "gap": 13,
+      "rowModes": ["auto","auto"]
+    },
+    "projects:entry_demo_project_2": {
+      "rows": [["title","tech","organization","role","dates"],["description"]],
+      "right": ["dates","role","organization"],
+      "gap": 13,
+      "rowModes": ["auto","auto"]
+    },
+    "publications:entry_demo_paper": {
+      "rows": [["authors","title","venue","year","status","supplement"]],
+      "right": [],
+      "gap": 4,
+      "rowModes": ["auto"]
+    },
+    "patents:entry_demo_patent": {
+      "rows": [["title","status","number","date"],["authors"]],
+      "right": ["date"],
+      "gap": 8,
+      "rowModes": ["auto","auto"]
+    },
+    "campus:entry_demo_campus": {
+      "rows": [["title","role","organization","dates"],["description"]],
+      "right": ["dates"],
+      "gap": 8,
+      "rowModes": ["auto","auto"]
+    }
+  },
+  "sectionStyles": {},
+  "internships": [
+    {
+      "id": "entry_demo_internship",
+      "title": "示例数字科技（虚构）",
+      "role": "研发实习生",
+      "dates": "2025.07–2025.08",
+      "department": "数据应用组",
+      "blocks": [
+        {
+          "id": "block_demo_internship_context",
+          "type": "paragraph",
+          "text": "两个月的虚构实习示例，用于展示短期实践经历的排版。"
+        },
+        {
+          "id": "block_demo_internship_work",
+          "type": "bullet",
+          "text": "协助整理测试样例与接口文档，记录问题并配合复测。\n完成一个内部数据展示页面，在导师指导下梳理交接说明。"
+        }
+      ],
+      "logo": ""
+    }
+  ]
 }

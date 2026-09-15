@@ -1,11 +1,11 @@
 import {icons} from './icons.js';
 import {getPath,profileInformation,pageBottomMargin} from './model.js';
-import {fieldKey,ownerKey,layoutFor,rowMode,styleCSS,applyRange} from './format.js';
+import {fieldKey,ownerKey,layoutFor,rowMode,styleCSS,applyRange,hasContentBlocks} from './format.js';
 import {paginationCSS} from './pagination.js';
 
 export const escapeHTML=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export {icons};
-const iconNames={education:'education',projects:'project',research:'research',awards:'award',skills:'skills',campus:'team',evaluation:'evaluation'};
+const iconNames={education:'education',internships:'briefcase',projects:'project',research:'research',awards:'award',skills:'skills',campus:'team',evaluation:'evaluation'};
 const publicationStatusClass=status=>'status-tag'+(/返修|在审|在投|修回|审稿|under\s*review|revision|submitted/i.test(status||'')?' status-pending':'');
 export function themeCSS(data){
  const s=data.styles,chinese=s.chineseFont==='serif'?'"SimSun", "Songti SC", serif':'"Microsoft YaHei", "PingFang SC", sans-serif';
@@ -37,9 +37,9 @@ export function renderResume(d){
  const pending=text=>d.styles.showPlaceholders?`<p class="pending-content">${e(text)}</p>`:'';
  const lines=(path,placeholder)=>getPath(d,path)?field(path,'div','multiline-text'):pending(placeholder);
  const noteLine=(a,b)=>a+(a&&b?' <span class="detail-divider">|</span> ':'')+b;
- const projectBody=index=>{
-   const project=d.projects[index];
-   const body=!project.blocks?lines(`projects.${index}.description`,'待补充：本人职责、技术方案与项目成果。'):!project.blocks.length?pending('待补充：可添加段落块或分点块，描述职责与成果。'):project.blocks.map((block,j)=>`<div class="project-content-block" data-block-id="${block.id}" data-block-type="${block.type}">${field(`projects.${index}.blocks.${j}.text`,'div','project-block-text',false,0,{listType:block.type==='paragraph'?'none':block.type})}</div>`).join('');
+ const experienceBody=(type,index)=>{
+   const project=d[type][index];
+   const body=!project.blocks?lines(`${type}.${index}.description`,'待补充：本人职责、技术方案与项目成果。'):!project.blocks.length?pending('待补充：可添加段落块或分点块，描述职责与成果。'):project.blocks.map((block,j)=>`<div class="project-content-block" data-block-id="${block.id}" data-block-type="${block.type}">${field(`${type}.${index}.blocks.${j}.text`,'div','project-block-text',false,0,{listType:block.type==='paragraph'?'none':block.type})}</div>`).join('');
    return `<div class="project-blocks experience-body">${body}</div>`;
  };
  const layout=(type,index)=>{
@@ -57,6 +57,7 @@ export function renderResume(d){
    }
    const styles={
      profile:{name:'profile-name',major:'profile-major',degree:'profile-major',phone:'profile-contact',email:'profile-contact',politics:'profile-personal-text',birth:'profile-personal-text',extra:'profile-personal-text'},
+     internships:{title:'layout-heading',department:'internship-department',role:'entry-role',dates:'layout-date'},
      education:{school:'layout-heading',label:'school-label',degree:'degree',dates:'layout-date',detail:'education-detail',note:'entry-note'},
      projects:{title:'layout-heading',dates:'layout-date',organization:'layout-meta role-label',role:'layout-meta role-label project-role',tech:'layout-meta project-keywords'},
      publications:{venue:'publication-venue',year:'publication-year',status:publicationStatusClass(d.publications[index]?.status),supplement:'publication-supplement'},
@@ -64,25 +65,33 @@ export function renderResume(d){
      skills:{category:'layout-skill-category'},campus:{title:'layout-heading',role:'entry-role',dates:'layout-date',organization:'entry-note'},
    };
    const cell=name=>{
-     if(type==='projects'&&name==='description')return `<div class="project-body-slot" data-layout-field="description">${projectBody(index)}</div>`;
+     if(hasContentBlocks(type)&&name==='description')return `<div class="project-body-slot" data-layout-field="description">${experienceBody(type,index)}</div>`;
      if(type==='campus'&&name==='description')return `<div class="campus-body-slot experience-body" data-layout-field="description">${field(prefix+'.description','div','multiline-text campus-description')}</div>`;
      const cls=styles[type]?.[name]||'',tag=name==='dates'||name==='date'?'time':type==='publications'&&name==='venue'?'cite':'span';
      const heading=type==='profile'&&name==='name'?1:cls==='layout-heading'?3:0;
      let content=field(prefix+'.'+name,tag,cls,name==='authors',heading);
+     if(type==='internships'&&name==='title'){
+       const logo=d.internships[index].logo;
+       content=`<span class="internship-company">${logo?`<img class="internship-logo" src="${e(logo)}" alt="${e(d.internships[index].title||'实习单位')} logo">`:''}${content}</span>`;
+     }
      if(type==='profile'&&['phone','email'].includes(name)){
        const href=name==='phone'?'tel:'+String(d.profile.phone).replace(/[^+\d]/g,''):'mailto:'+d.profile.email;
        content=`<a href="${e(href)}"><svg class="icon" aria-hidden="true"><use href="#icon-${name==='phone'?'phone':'mail'}"/></svg>${content}</a>`;
      }
      return `<span class="field-cell" data-layout-field="${name}">${content}</span>`;
    };
-   const join=names=>names.map(cell).join('<span class="field-separator" aria-hidden="true"> </span>');
+   const join=names=>names.map((name,i)=>{
+     const previous=names[i-1],pair=type==='internships'&&((previous==='department'&&name==='role')||(previous==='role'&&name==='department'));
+     const separator=i?(pair?'<span class="internship-role-dot" aria-hidden="true"> · </span>':'<span class="field-separator" aria-hidden="true"> </span>'):'';
+     return separator+cell(name);
+   }).join('');
    return `<div class="field-layout layout-${type}${type==='profile'?' profile-layout':''}" data-layout-owner="${e(key)}" style="--field-gap:${config.gap}px">${config.rows.map((row,i)=>{
-     const filled=row.filter(name=>type==='projects'&&name==='description'?d.projects[index].blocks?.length||d.styles.showPlaceholders||d.projects[index].description:getPath(d,prefix+'.'+name));
+     const filled=row.filter(name=>hasContentBlocks(type)&&name==='description'?d[type][index].blocks?.length||d.styles.showPlaceholders||d[type][index].description:getPath(d,prefix+'.'+name));
      if(!filled.length)return '';
      const mode=rowMode(config,i,filled),right=mode==='split'?filled.filter(name=>config.right.includes(name)):[],left=filled.filter(name=>!right.includes(name));
      const group=(names,side)=>`<div class="field-group group-${side}${names.length===1?' group-single':' group-joined'}">${join(names)}</div>`;
      let content=mode==='split'&&right.length?`${left.length?group(left,'leading'):''}${group(right,'trailing')}`:join(filled);
-     if(['projects','campus'].includes(type)&&filled.includes('description')){
+     if(['projects','internships','campus'].includes(type)&&filled.includes('description')){
        const at=filled.indexOf('description'),before=filled.slice(0,at),after=filled.slice(at+1);
        const neighbor=names=>{const trailing=names.filter(name=>right.includes(name)),leading=names.filter(name=>!trailing.includes(name));return names.length?`<div class="body-neighbor row-${mode} ${names.length>1?'row-joined':'row-single'}">${trailing.length?`${leading.length?group(leading,'leading'):''}${group(trailing,'trailing')}`:join(names)}</div>`:'';};
        content=neighbor(before)+cell('description')+neighbor(after);
@@ -98,7 +107,8 @@ export function renderResume(d){
  const entry=(type,i,body,cls='')=>`<article class="${cls}" data-entry="${type}.${i}" data-entry-id="${e(d[type][i].id||i)}">${custom(type,i,body)}</article>`;
  const content={
  education:()=>`<div class="section-content education-list">${d.education.map((x,i)=>{const p=`education.${i}`;return entry('education',i,`<div class="entry-heading"><h3>${field(p+'.school')}${optional(p+'.label','span','school-label')}${optional(p+'.degree','span','degree')}</h3>${field(p+'.dates','time')}</div>${optional(p+'.detail','p','education-detail')}${optional(p+'.note','p','entry-note')}`,'education-entry');}).join('')||pending('待补充教育经历。')}</div>`,
- projects:()=>`<div class="section-content">${d.projects.map((x,i)=>{const p=`projects.${i}`;return entry('projects',i,`<div class="entry-heading">${field(p+'.title','h3')}${field(p+'.dates','time')}</div><p class="project-meta">${optional(p+'.organization','span','role-label')}${optional(p+'.role','span','role-label project-role')}${optional(p+'.tech','span','project-keywords')}</p>${projectBody(i)}`,'project-entry');}).join('')||pending('待补充项目经历。')}</div>`,
+ internships:()=>`<div class="section-content internship-list">${d.internships.map((x,i)=>entry('internships',i,layout('internships',i),'internship-entry')).join('')||pending('待补充实习经历。')}</div>`,
+ projects:()=>`<div class="section-content">${d.projects.map((x,i)=>{const p=`projects.${i}`;return entry('projects',i,`<div class="entry-heading">${field(p+'.title','h3')}${field(p+'.dates','time')}</div><p class="project-meta">${optional(p+'.organization','span','role-label')}${optional(p+'.role','span','role-label project-role')}${optional(p+'.tech','span','project-keywords')}</p>${experienceBody('projects',i)}`,'project-entry');}).join('')||pending('待补充项目经历。')}</div>`,
  research:()=>{
    const publications=d.publications.map((x,i)=>{const p=`publications.${i}`;return `<li data-entry="${p}" data-entry-id="${e(x.id||i)}"><span class="publication-number">[${i+1}]</span><div>${custom('publications',i,`${field(p+'.authors','span','',true)} ${field(p+'.title')}<span class="publication-note">${field(p+'.venue','cite','publication-venue')}${x.year?' · '+field(p+'.year','span','publication-year'):''}${optional(p+'.status','span',publicationStatusClass(x.status))}${optional(p+'.supplement','span','publication-supplement')}</span>`)}</div></li>`;}).join('');
    const patents=d.patents.map((x,i)=>{const p=`patents.${i}`;return `<li data-entry="${p}" data-entry-id="${e(x.id||i)}">${custom('patents',i,`<p class="patent-title">${field(p+'.title')}${optional(p+'.status','span','status-tag')}</p><p class="patent-authors">${field(p+'.authors','span','',true)}</p><p class="entry-note">${noteLine(optional(p+'.number'),optional(p+'.date','time'))}</p>`)}</li>`;}).join('');

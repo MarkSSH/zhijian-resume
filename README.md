@@ -24,10 +24,21 @@ A local-first resume studio with precise layout control and PDF export.
 
 ~~~sh
 npm ci
-npm start
+npm run server
 ~~~
 
-打开 <http://127.0.0.1:4173/>，进入工作台。首次启动自动建立本地数据目录，不要求准备任何个人简历文件。
+自定义启动端口：
+
+~~~sh
+npm run server 8080
+# 也支持显式参数：npm run server -- --port 8080
+~~~
+
+此时访问 <http://127.0.0.1:8080/>。直接填写端口是项目提供的简写；使用 `--port` 时，前面的独立 `--` 用于告诉 npm 将后续参数传给程序，改用 `npm run` 也需要这个分隔符。
+
+端口优先级为命令行参数、`PORT` 环境变量、默认 `4173`；有效范围为 1–65535。使用 `npm run server -- --help` 查看帮助。更换端口后仍读取同一数据目录；尚未保存的浏览器草稿按端口隔离，切换前请等待保存完成。避免同时启动多个服务写入同一数据目录；需要并行运行时分别指定 `ZHIJIAN_DATA_DIR`。
+
+默认端口打开 <http://127.0.0.1:4173/>，进入工作台。首次启动自动建立本地数据目录，不要求准备任何个人简历文件。
 
 新建窗口的“从哪里开始”提供：
 
@@ -37,13 +48,15 @@ npm start
 
 内置预设位于 `presets/`。它们与用户数据分开；编辑或删除简历不会修改预设。已有本地版本会继续读取原数据，不会被演示内容覆盖。
 
-`npm run preview` 与 `npm start` 等效。关闭终端会停止服务，修改服务端代码后需重启。
+`npm run server` 为推荐入口，原有的 `npm start` 和 `npm run preview` 仍可使用。关闭终端会停止服务，修改服务端代码后需重启。
 
 ## 编辑与导出
 
 左侧编辑内容与样式，右侧预览也可直接修改文字。修改停顿约 0.75 秒后自动保存。每份简历的局部样式、字段布局和正文块均保存到它自己的 JSON 中。
 
-“字段布局”支持拖动或按钮排序、文字接续与左右对齐；“局部格式”支持整字段和部分选中文字。项目正文可按需插入段落块、分点块，列表每行是一点。教育背景、项目、科研成果、奖项、技能、学生工作与评价可独立显示或隐藏。
+“字段布局”支持拖动或按钮排序、文字接续与左右对齐；“局部格式”支持整字段和部分选中文字。项目正文可按需插入段落块、分点块，列表每行是一点。教育背景、实习、项目、科研成果、奖项、技能、学生工作与评价可独立显示或隐藏。
+
+“实习经历”默认位于教育背景之后、项目经历之前，可填写公司／机构、部门、实习岗位、起止时间，并使用段落、圆点或编号内容块。默认标题行采用“公司／机构　部门 · 岗位”的顺序，时间靠右。每条实习可上传、替换或移除单位 logo，显示在公司名称前；图片随 JSON、HTML、PDF 导出。它支持局部格式、字段布局、模块排序与导出。旧简历升级时先隐藏空实习模块；添加第一条实习会自动显示，也可以手动控制模块开关。
 
 编辑器右上角可导出 PDF、JSON 和 HTML；JSON 与 HTML 会嵌入图片，可用于迁移或备份。“恢复上一版”使用上一次成功保存前的数据，整份简历恢复请使用工作台回收站。
 
@@ -95,13 +108,13 @@ PowerShell 示例：
 
 ~~~powershell
 $env:ZHIJIAN_DATA_DIR = 'D:/MyResumes'
-npm start
+npm run server
 ~~~
 
 macOS / Linux 示例：
 
 ~~~sh
-ZHIJIAN_DATA_DIR="$HOME/.local/share/zhijian" npm start
+ZHIJIAN_DATA_DIR="$HOME/.local/share/zhijian" npm run server
 ~~~
 
 设置新的数据目录不会自动搬迁现有资料；使用前将完整数据目录复制到目标位置，或从空工作台导入 JSON。旧 main 数据不会因切换目录而被自动读取。
@@ -114,7 +127,7 @@ ZHIJIAN_DATA_DIR="$HOME/.local/share/zhijian" npm start
 | `editor.html`、`app/editor.*`、`app/advanced.js` | 内容、样式、字段布局和编辑交互 |
 | `app/model.js`、`app/format.js` | 数据校验、版本升级、稳定标识与局部格式 |
 | `app/render.js`、`app/icons.js`、`styles.css` | 共享简历渲染与排版 |
-| `scripts/preview.mjs` | 本地 HTTP 路由 |
+| `scripts/preview.mjs`、`scripts/cli.mjs` | 本地 HTTP 路由与启动参数 |
 | `scripts/store.mjs` | 初始化、保存、备份、回收站和并发版本检查 |
 | `scripts/presets.mjs`、`presets/` | 内置默认版式与虚构演示 |
 | `scripts/pdf.mjs`、`scripts/pagination.mjs`、`app/pagination.js` | PDF 导出与实际分页适配 |

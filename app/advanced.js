@@ -1,6 +1,6 @@
 import {fields,sectionLabels,getPath} from './model.js';
 import {escapeHTML as e} from './render.js';
-import {entryTypes,defaultRows,fieldKey,ownerKey,layoutFor,rowMode,orderedProfile,arrangeProfile,patchStyle,applyRange} from './format.js';
+import {entryTypes,defaultRows,fieldKey,ownerKey,layoutFor,rowMode,orderedProfile,arrangeProfile,patchStyle,applyRange,hasContentBlocks,contentBlockTypes} from './format.js';
 
 const profileLabels={name:'姓名',major:'专业 / 研究领域',degree:'身份 / 学位',phone:'联系电话',email:'电子邮箱',politics:'政治面貌',birth:'出生年月',nativePlace:'户籍地',ethnicity:'民族',extra:'补充信息'};
 const moduleOf=type=>['publications','patents'].includes(type)?'research':type;
@@ -12,8 +12,8 @@ export function createAdvanced({getData,getSection,setSection,setTab,mutate,rend
   const data=()=>getData();
   function allFields(){
     const list=Object.entries(profileLabels).map(([key,label])=>({path:`profile.${key}`,label,section:'profile'}));
-    for(const type of entryTypes)data()[type].forEach((entry,i)=>{for(const [key,label] of fields[type])if(!(type==='projects'&&key==='description'))list.push({path:`${type}.${i}.${key}`,label:`${i+1}. ${label}`,section:moduleOf(type)});});
-    data().projects.forEach((project,i)=>project.blocks.forEach((block,j)=>list.push({path:`projects.${i}.blocks.${j}.text`,label:`${i+1}. 内容块 ${j+1} · ${{paragraph:'段落',bullet:'圆点',numbered:'编号'}[block.type]}`,section:'projects'})));
+    for(const type of entryTypes)data()[type].forEach((entry,i)=>{for(const [key,label] of fields[type])if(!(hasContentBlocks(type)&&key==='description'))list.push({path:`${type}.${i}.${key}`,label:`${i+1}. ${label}`,section:moduleOf(type)});});
+    for(const type of contentBlockTypes)data()[type].forEach((entry,i)=>entry.blocks.forEach((block,j)=>list.push({path:`${type}.${i}.blocks.${j}.text`,label:`${i+1}. 内容块 ${j+1} · ${{paragraph:'段落',bullet:'圆点',numbered:'编号'}[block.type]}`,section:type})));
     data().sections.forEach((s,i)=>{list.push({path:`sections.${i}.title`,label:'模块标题',section:s.id},{path:`sections.${i}.english`,label:'英文副标题',section:s.id});});
     list.push({path:'evaluation',label:'个人评价',section:'evaluation'});
     return list.map(item=>({...item,key:fieldKey(data(),item.path)}));
@@ -30,7 +30,7 @@ export function createAdvanced({getData,getSection,setSection,setTab,mutate,rend
   }
   function nodeFor(){return frame.contentDocument?.querySelector(`[data-field-key="${selected().key}"]`);}
   function updateTarget(){if(!data())return;const item=selected(),label=document.querySelector('#format-target');if(label)label.textContent=range?.key===item.key?`已选 ${range.end-range.start} 字 · ${item.label}`:item.label;}
-  function selectedBlock(){const path=selected().path.split('.');return path[0]==='projects'&&path[2]==='blocks'?data().projects[path[1]].blocks[path[3]]:null;}
+  function selectedBlock(){const path=selected().path.split('.');return hasContentBlocks(path[0])&&path[2]==='blocks'?data()[path[0]][path[1]].blocks[path[3]]:null;}
   function currentStyle(){
     const item=selected();if(scope==='section')return data().sectionStyles[item.section]||{};
     const format=data().format[item.key]||{style:{},marks:[]};
@@ -143,13 +143,14 @@ export function createAdvanced({getData,getSection,setSection,setTab,mutate,rend
     if(entry.type==='profile')return profileOrderPanel();
     const {type,index}=entry,layout=layoutFor(data(),type,index),source=type==='profile'?data().profile:data()[type][index];
     const preset=type==='projects'?['project-line','名称、机构、角色、时间同行','名称与机构角色接续，时间单独靠右']:
+      type==='internships'?['internship-line','公司、部门 · 岗位、时间同行','部门与岗位用圆点连接，时间单独靠右']:
       type==='publications'?['reference-line','作者、论文名、期刊会议连续排版','整条文献自然接续，换行后继续使用整行宽度']:
       type==='patents'?['patent-line','专利信息连续排版','名称、发明人、专利号与日期按顺序接续']:null;
     const rows=layout.rows.map((row,i)=>{
       const mode=layout.rowModes[i];
       const chips=row.map((key,j)=>`<div class="layout-chip" draggable="${type==='profile'&&key==='name'?'false':'true'}" data-drag-field="${key}">
-        <div class="chip-top"><span class="drag-grip" aria-hidden="true">⠿</span><strong>${e(labelFor(type,key))}</strong>${type==='projects'&&key==='description'?`<small>${source.blocks.length} 个内容块</small>`:!source[key]?'<small>未填写</small>':''}<button data-layout-shift="-1" data-layout-field="${key}" aria-label="${e(labelFor(type,key))}向左"${j===0||(type==='profile'&&key==='name')?' disabled':''}>←</button><button data-layout-shift="1" data-layout-field="${key}" aria-label="${e(labelFor(type,key))}向右"${j===row.length-1||(type==='profile'&&key==='name')?' disabled':''}>→</button></div>
-        <div class="chip-options"><label>移至<select data-layout-row-target="${key}"${type==='profile'&&key==='name'?' disabled':''} aria-label="${e(labelFor(type,key))}移至行">${layout.rows.map((_,n)=>`<option value="${n}"${n===i?' selected':''}>第 ${n+1} 行</option>`).join('')}<option value="${layout.rows.length}"${layout.rows.length>=12?' disabled':''}>新的一行</option></select></label><label title="${mode==='flow'?'文字接续按字段顺序排版；切换左右对齐可启用靠右。':'靠右字段会归入本行右侧，其余字段在左侧接续。'}"><input type="checkbox" data-layout-right="${key}"${layout.right.includes(key)?' checked':''}${mode==='flow'||type==='profile'||(type==='projects'&&key==='description')?' disabled':''}>靠右</label></div>
+        <div class="chip-top"><span class="drag-grip" aria-hidden="true">⠿</span><strong>${e(labelFor(type,key))}</strong>${hasContentBlocks(type)&&key==='description'?`<small>${source.blocks.length} 个内容块</small>`:!source[key]?'<small>未填写</small>':''}<button data-layout-shift="-1" data-layout-field="${key}" aria-label="${e(labelFor(type,key))}向左"${j===0||(type==='profile'&&key==='name')?' disabled':''}>←</button><button data-layout-shift="1" data-layout-field="${key}" aria-label="${e(labelFor(type,key))}向右"${j===row.length-1||(type==='profile'&&key==='name')?' disabled':''}>→</button></div>
+        <div class="chip-options"><label>移至<select data-layout-row-target="${key}"${type==='profile'&&key==='name'?' disabled':''} aria-label="${e(labelFor(type,key))}移至行">${layout.rows.map((_,n)=>`<option value="${n}"${n===i?' selected':''}>第 ${n+1} 行</option>`).join('')}<option value="${layout.rows.length}"${layout.rows.length>=12?' disabled':''}>新的一行</option></select></label><label title="${mode==='flow'?'文字接续按字段顺序排版；切换左右对齐可启用靠右。':'靠右字段会归入本行右侧，其余字段在左侧接续。'}"><input type="checkbox" data-layout-right="${key}"${layout.right.includes(key)?' checked':''}${mode==='flow'||type==='profile'||(hasContentBlocks(type)&&key==='description')?' disabled':''}>靠右</label></div>
       </div>`).join('');
       return `<section class="layout-row" data-drop-row="${i}"><div class="layout-row-heading"><span>第 ${i+1} 行</span>${!row.length?`<button data-layout-delete-row="${i}" aria-label="删除空行 ${i+1}">删除空行</button>`:'<small>按顺序接续文字</small>'}</div>
         ${type==='profile'?'<p class="row-mode-hint">姓名固定在上方；信息按两列对齐。</p>':`<label class="row-mode-control">行排版<select data-layout-row-mode="${i}" aria-label="第 ${i+1} 行排版方式">${[['auto','自动 · 按靠右设置'],['flow','文字接续 · 连续换行'],['split','左右对齐 · 时间等靠右']].map(([value,label])=>`<option value="${value}"${mode===value?' selected':''}>${label}</option>`).join('')}</select></label>`}
@@ -158,9 +159,9 @@ export function createAdvanced({getData,getSection,setSection,setTab,mutate,rend
     return `<h2 class="style-title">字段布局</h2><p class="section-helper">${type==='profile'?'姓名下方的信息统一为两列。可调整各行中的字段顺序。':'同一行的文字自然接续。需要独立靠右的时间等字段，可使用左右对齐。'}</p>${sectionSelect()}
       <label class="field"><span>当前条目</span><select data-layout-entry>${layoutEntries().map(x=>`<option value="${x.owner}"${x.owner===entry.owner?' selected':''}>${e(x.label.slice(0,60))}</option>`).join('')}</select></label>
       ${preset?`<button class="layout-preset" data-layout-preset="${preset[0]}"><span>${preset[1]}</span><small>${preset[2]}</small></button>`:''}
-      ${type==='projects'?'<p class="muted-note">项目正文按内容块顺序独占行宽；段落和分点的增删排序在“内容编辑”中完成。</p>':''}<div class="layout-rows">${rows}</div>
+      ${hasContentBlocks(type)?'<p class="muted-note">正文按内容块顺序独占行宽；段落和分点的增删排序在“内容编辑”中完成。</p>':''}<div class="layout-rows">${rows}</div>
       <div class="layout-actions"><button class="button secondary" data-layout-add-row${layout.rows.length>=12?' disabled':''}>＋ 新建一行</button><button class="button secondary" data-layout-reset>恢复默认布局</button></div>
-      ${type!=='profile'&&data()[type].length>1?`<button class="apply-layout-all" data-layout-apply-all>将此布局应用到全部${{education:'教育经历',projects:'项目',publications:'论文',patents:'专利',awards:'奖项',skills:'技能',campus:'学生工作'}[type]}（${data()[type].length} 条）</button>`:''}
+      ${type!=='profile'&&data()[type].length>1?`<button class="apply-layout-all" data-layout-apply-all>将此布局应用到全部${{education:'教育经历',internships:'实习经历',projects:'项目',publications:'论文',patents:'专利',awards:'奖项',skills:'技能',campus:'学生工作'}[type]}（${data()[type].length} 条）</button>`:''}
       <label class="field" style="margin-top:18px"><span>字段间距（px）</span><input type="number" data-layout-gap min="0" max="30" value="${layout.gap}"></label>
       <p class="muted-note">拖拽、左右箭头与“移至”菜单都可调整顺序。空字段不占纸面空间；段落中的回车会保留。文字接续不会把字段分成独立的窄列。</p>`;
   }
@@ -189,6 +190,7 @@ export function createAdvanced({getData,getSection,setSection,setTab,mutate,rend
     if(b.hasAttribute('data-format-clear')){apply({},true);return;}
     if(b.hasAttribute('data-layout-preset')){editLayout(layout=>{
       if(b.dataset.layoutPreset==='project-line'){layout.rows=[['title','organization','role','dates'],['tech'],['description']];layout.right=['dates'];layout.rowModes=['split','flow','flow'];}
+      else if(b.dataset.layoutPreset==='internship-line'){layout.rows=[['title','department','role','dates'],['description']];layout.right=['dates'];layout.rowModes=['split','flow'];}
       else{layout.rows=[b.dataset.layoutPreset==='reference-line'?['authors','title','venue','year','status','supplement']:['title','authors','number','date','status']];layout.right=[];layout.rowModes=['flow'];}
     });return;}
     if(b.hasAttribute('data-layout-add-row')){editLayout(layout=>{if(layout.rows.length<12){layout.rows.push([]);layout.rowModes.push('auto');}});return;}

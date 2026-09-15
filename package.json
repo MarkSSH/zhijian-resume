@@ -5,6 +5,7 @@
   "description": "Zhijian — a local-first resume studio with precise layout control and PDF export.",
   "type": "module",
   "scripts": {
+    "server": "node scripts/preview.mjs",
     "preview": "node scripts/preview.mjs",
     "test": "node --test test/*.test.mjs",
     "start": "node scripts/preview.mjs"

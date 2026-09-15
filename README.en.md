@@ -10,10 +10,14 @@ Install Node.js **22 or later** (24 LTS recommended). PDF export and two-page fi
 
 ~~~sh
 npm ci
-npm start
+npm run server
 ~~~
 
-Open <http://127.0.0.1:4173/>. A fresh installation starts with an empty collection and creates its own local data directory. No account or AI service is needed.
+To use another port, run `npm run server 8080` and open <http://127.0.0.1:8080/>. Explicit flags also work: `npm run server -- --port 8080`. The standalone `--` tells npm to forward flags to the application; using a bare port avoids this separator. The existing `npm start` and `npm run preview` aliases remain available. CLI arguments override `PORT`, then the default `4173`; the valid range is 1–65535. Run `npm run server -- --help` for help.
+
+Changing ports keeps the same data directory, but browser drafts are isolated by port: wait for autosave before switching. Do not run concurrent servers against one data directory; use separate `ZHIJIAN_DATA_DIR` values when running multiple instances.
+
+With the default port, open <http://127.0.0.1:4173/>. A fresh installation starts with an empty collection and creates its own local data directory. No account or AI service is needed.
 
 When creating a résumé, choose the blank preset, a clearly fictional demo, or a copy of an existing résumé. The interface and default sections are primarily Chinese; English text uses Georgia with system fallbacks.
 
@@ -29,6 +33,8 @@ When creating a résumé, choose the blank preset, a clearly fictional demo, or 
 Restoring preserves the résumé ID, contents, styles, and existing backup files. Editors opened before deletion must reload the restored version before saving. Permanent deletion removes that résumé's archived files; separate exports and shared image files remain independent.
 
 Two-page fitting adjusts spacing, margins and, when necessary, font size. It does not rewrite or trim your content. If two pages cannot be achieved within the supported limits, the current layout is preserved. Always inspect pagination before sending a résumé.
+
+Internships appear after education and before projects by default. Each entry has an organization, department, role, dates and rich content blocks. Older documents gain a hidden, empty internship section; adding the first entry shows it automatically. The default heading uses “Organization　Department · Role”, with dates aligned right. Each entry supports uploading, replacing or removing a logo before its organization name; logos are included in JSON, HTML and PDF exports. Its order, visibility, field layout and text formatting remain editable.
 
 ## Public code and private data
 
@@ -61,13 +67,13 @@ PowerShell:
 
 ~~~powershell
 $env:ZHIJIAN_DATA_DIR = 'D:/MyResumes'
-npm start
+npm run server
 ~~~
 
 macOS / Linux:
 
 ~~~sh
-ZHIJIAN_DATA_DIR="$HOME/.local/share/zhijian" npm start
+ZHIJIAN_DATA_DIR="$HOME/.local/share/zhijian" npm run server
 ~~~
 
 Changing the data directory does not move existing data automatically. Copy your complete data directory first, or import a JSON export into the new workspace.

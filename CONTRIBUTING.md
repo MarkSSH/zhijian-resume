@@ -8,7 +8,7 @@
 
 ~~~sh
 npm ci
-npm start
+npm run server
 npm test
 ~~~
 

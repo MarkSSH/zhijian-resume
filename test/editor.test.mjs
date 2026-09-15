@@ -12,7 +12,7 @@ const seed={
   version:1,
   profile:{name:'测试姓名',authorName:'Test A',major:'测试专业',degree:'博士研究生',phone:'',email:'',politics:'',birth:'',extra:'',logo:'',photo:'',logoMode:'contain',showLogo:true,showPhoto:true},
   styles:{accent:'#30455e',paper:'#ffffff',fontSize:12,lineHeight:1.65,sectionGap:14,pageMargin:42,photoWidth:82,logoSize:88,chineseFont:'sans',showEnglish:true,showPlaceholders:true},
-  sections:Object.entries(sectionLabels).map(([id,title])=>({id,title,english:id.toUpperCase(),visible:true})),
+  sections:Object.entries(sectionLabels).filter(([id])=>id!=='internships').map(([id,title])=>({id,title,english:id.toUpperCase(),visible:true})),
   education:[blankEntry('education')],projects:[],patents:[],awards:[],skills:[],campus:[],evaluation:'',
   publications:[{...blankEntry('publications'),title:'Published title',authors:'Test A',group:'published'},{...blankEntry('publications'),title:'Pending title',authors:'Test A',status:'在审',group:'pending'}],
 };
@@ -46,8 +46,8 @@ test('local server persists, backs up, rejects stale writes and prevents cross-o
   t.after(()=>new Promise(resolve=>server.close(resolve)));
   const base=`http://127.0.0.1:${server.address().port}`;
   const original=await (await fetch(base+'/api/resume')).json();
-  assert.equal(original.data.version,4);
-  assert.equal(JSON.parse(await readFile(path.join(root,'data','resume.pre-v4.json'),'utf8')).version,1);
+  assert.equal(original.data.version,6);
+  assert.equal(JSON.parse(await readFile(path.join(root,'data','resume.pre-v6.json'),'utf8')).version,1);
   const data=clone(original.data);data.profile.name='自动化测试';
   const put=(revision,body=data,extra={})=>fetch(base+'/api/resume',{method:'PUT',headers:{'Content-Type':'application/json','If-Match':revision,...extra},body:JSON.stringify(body)});
   const saved=await put(original.revision);assert.equal(saved.status,200);

@@ -1,10 +1,14 @@
-export const entryTypes=['education','projects','publications','patents','awards','skills','campus'];
+import {activePrintLayout,layoutFingerprint} from './pagination.js';
+export const entryTypes=['education','internships','projects','publications','patents','awards','skills','campus'];
+export const contentBlockTypes=['projects','internships'];
+export const hasContentBlocks=type=>contentBlockTypes.includes(type);
 export const fontOptions={georgia:'Georgia, "Microsoft YaHei", serif',times:'"Times New Roman", "SimSun", serif',sans:'Georgia, "Microsoft YaHei", "PingFang SC", sans-serif',serif:'Georgia, "SimSun", "Songti SC", serif'};
 export const inlineProperties=['fontFamily','fontSize','color','fontWeight','fontStyle','textDecoration'];
 export const blockProperties=[...inlineProperties,'textAlign','lineHeight','letterSpacing','marginTop','marginBottom','indent','listType'];
 export const defaultRows={
   profile:[['name'],['major','degree'],['phone','email'],['nativePlace','ethnicity'],['politics','birth'],['extra']],
   education:[['school','label','degree','dates'],['detail'],['note']],
+  internships:[['title','department','role','dates'],['description']],
   projects:[['title','dates'],['organization','role','tech'],['description']],
   publications:[['authors','title'],['venue','year','status','supplement']],
   patents:[['title','status'],['authors'],['number','date']],
@@ -51,11 +55,39 @@ export function migrate(input){
       }
     }
   }
+  if(data?.version===4){
+    // Adding a hidden, empty section leaves the rendered résumé unchanged.
+    const preservePrint=!!activePrintLayout(data)&&data.internships===undefined&&!data.sections?.some(section=>section.id==='internships');
+    data.version=5;
+    if(data.internships===undefined)data.internships=[];
+    if(Array.isArray(data.sections)&&!data.sections.some(section=>section.id==='internships')){
+      const education=data.sections.findIndex(section=>section.id==='education');
+      data.sections.splice(education<0?0:education+1,0,{id:'internships',title:'实习经历',english:'INTERNSHIPS',visible:false});
+    }
+    if(preservePrint)data.printLayout.source=layoutFingerprint(data);
+  }
+  if(data?.version===5){
+    const preservePrint=!!activePrintLayout(data)&&(!data.internships?.length||data.sections?.find(section=>section.id==='internships')?.visible===false);
+    data.version=6;
+    if(Array.isArray(data.internships))for(const entry of data.internships){
+      if(!entry||typeof entry!=='object')continue;
+      entry.logo??='';delete entry.location;
+      if(data.format)delete data.format[`internships:${entry.id}:location`];
+      const layout=data.layouts?.[`internships:${entry.id}`];
+      if(Array.isArray(layout?.rows)&&layout.rows.every(Array.isArray)){
+        const oldDefault=JSON.stringify(layout.rows)===JSON.stringify([['title','role','dates'],['department','location'],['description']]);
+        if(oldDefault){layout.rows=copy(defaultRows.internships);layout.rowModes=['split','flow'];}
+        else layout.rows=layout.rows.map(row=>row.filter(field=>field!=='location'));
+        if(Array.isArray(layout.right))layout.right=layout.right.filter(field=>field!=='location');
+      }
+    }
+    if(preservePrint)data.printLayout.source=layoutFingerprint(data);
+  }
   return data;
 }
 export function fieldKey(data,path){
   const [type,index,field]=path.split('.');
-  if(type==='projects'&&field==='blocks'){const [,i,,j,property]=path.split('.');return `projects:${data.projects[i].id}:block:${data.projects[i].blocks[j].id}:${property}`;}
+  if(hasContentBlocks(type)&&field==='blocks'){const [,i,,j,property]=path.split('.');return `${type}:${data[type][i].id}:block:${data[type][i].blocks[j].id}:${property}`;}
   if(type==='sections')return `section:${data.sections[index].id}:${field}`;
   if(entryTypes.includes(type))return `${type}:${data[type][index].id||index}:${field}`;
   return path;
@@ -113,7 +145,7 @@ export function updateText(data,path,value,edit){
 }
 export function dropEntryMetadata(data,type,index){const entry=data[type][index];if(!entry)return;const prefix=`${type}:${entry.id}:`;for(const key of Object.keys(data.format||{}))if(key.startsWith(prefix))delete data.format[key];if(data.layouts)delete data.layouts[`${type}:${entry.id}`];}
 export function validateExtensions(data){
-  if(![2,3,4].includes(data.version))return [];
+  if(![2,3,4,5,6].includes(data.version))return [];
   const errors=[],keys=new Map(),owners=new Map();
   const object=x=>x&&typeof x==='object'&&!Array.isArray(x);
   const validStyle=(style,inline=false)=>{
@@ -136,15 +168,16 @@ export function validateExtensions(data){
   const ids=new Set();
   for(const type of entryTypes)for(const entry of data[type]||[]){
     if(!/^entry_[a-zA-Z0-9_-]+$/.test(entry?.id)||ids.has(entry.id)){errors.push('条目标识缺失或重复');continue;}ids.add(entry.id);
-    for(const field of defaultRows[type].flat())keys.set(`${type}:${entry.id}:${field}`,entry[field]);
-    if(type==='projects'&&data.version>=3){
+    const allowed=defaultRows[type].flat().concat(type==='internships'&&data.version<6?['location']:[]);
+    for(const field of allowed)keys.set(`${type}:${entry.id}:${field}`,entry[field]);
+    if(hasContentBlocks(type)&&data.version>=3){
       keys.delete(`${type}:${entry.id}:description`);
       for(const block of entry.blocks){
         if(ids.has(block.id))errors.push('内容块标识重复');ids.add(block.id);
-        keys.set(`projects:${entry.id}:block:${block.id}:text`,block.text);
+        keys.set(`${type}:${entry.id}:block:${block.id}:text`,block.text);
       }
     }
-    owners.set(`${type}:${entry.id}`,defaultRows[type].flat().filter(key=>!(type==='publications'&&key==='supplement'&&data.version<4)));
+    owners.set(`${type}:${entry.id}`,allowed.filter(key=>!(type==='publications'&&key==='supplement'&&data.version<4)));
   }
   for(const section of data.sections||[])for(const field of ['title','english'])keys.set(`section:${section.id}:${field}`,section[field]);
   for(const name of ['format','sectionStyles','layouts'])if(!object(data[name]))errors.push(`${name}格式不正确`);

@@ -1,29 +1,98 @@
 {
-  "version": 4,
+  "version": 6,
   "profile": {
-    "name": "", "authorName": "", "major": "", "degree": "",
-    "phone": "", "email": "", "politics": "", "birth": "",
-    "nativePlace": "", "ethnicity": "", "extra": "",
-    "logo": "", "photo": "", "logoMode": "contain",
-    "showLogo": false, "showPhoto": false
+    "name": "",
+    "authorName": "",
+    "major": "",
+    "degree": "",
+    "phone": "",
+    "email": "",
+    "politics": "",
+    "birth": "",
+    "nativePlace": "",
+    "ethnicity": "",
+    "extra": "",
+    "logo": "",
+    "photo": "",
+    "logoMode": "contain",
+    "showLogo": false,
+    "showPhoto": false
   },
   "styles": {
-    "accent": "#30455e", "paper": "#ffffff", "fontSize": 12,
-    "lineHeight": 1.65, "sectionGap": 14, "pageMargin": 42,
-    "pageVerticalMargin": 32, "spacingScale": 1,
-    "photoWidth": 82, "logoSize": 88, "chineseFont": "sans",
-    "showEnglish": true, "showPlaceholders": true
+    "accent": "#30455e",
+    "paper": "#ffffff",
+    "fontSize": 12,
+    "lineHeight": 1.65,
+    "sectionGap": 14,
+    "pageMargin": 42,
+    "pageVerticalMargin": 32,
+    "spacingScale": 1,
+    "photoWidth": 82,
+    "logoSize": 88,
+    "chineseFont": "sans",
+    "showEnglish": true,
+    "showPlaceholders": true
   },
   "sections": [
-    {"id": "education", "title": "教育背景", "english": "EDUCATION", "visible": true},
-    {"id": "projects", "title": "项目经历", "english": "PROJECTS", "visible": true},
-    {"id": "research", "title": "科研成果", "english": "RESEARCH", "visible": true},
-    {"id": "awards", "title": "荣誉奖项", "english": "AWARDS", "visible": true},
-    {"id": "skills", "title": "个人技能", "english": "SKILLS", "visible": true},
-    {"id": "campus", "title": "学生工作经历", "english": "CAMPUS", "visible": true},
-    {"id": "evaluation", "title": "个人评价", "english": "ABOUT ME", "visible": true}
+    {
+      "id": "education",
+      "title": "教育背景",
+      "english": "EDUCATION",
+      "visible": true
+    },
+    {
+      "id": "internships",
+      "title": "实习经历",
+      "english": "INTERNSHIPS",
+      "visible": false
+    },
+    {
+      "id": "projects",
+      "title": "项目经历",
+      "english": "PROJECTS",
+      "visible": true
+    },
+    {
+      "id": "research",
+      "title": "科研成果",
+      "english": "RESEARCH",
+      "visible": true
+    },
+    {
+      "id": "awards",
+      "title": "荣誉奖项",
+      "english": "AWARDS",
+      "visible": true
+    },
+    {
+      "id": "skills",
+      "title": "个人技能",
+      "english": "SKILLS",
+      "visible": true
+    },
+    {
+      "id": "campus",
+      "title": "学生工作经历",
+      "english": "CAMPUS",
+      "visible": true
+    },
+    {
+      "id": "evaluation",
+      "title": "个人评价",
+      "english": "ABOUT ME",
+      "visible": true
+    }
   ],
-  "education": [], "projects": [], "publications": [], "patents": [],
-  "awards": [], "skills": [], "campus": [], "evaluation": "",
-  "format": {}, "layouts": {}, "sectionStyles": {}
+  "education": [],
+  "projects": [],
+  "publications": [],
+  "patents": [],
+  "awards": [],
+  "skills": [],
+  "campus": [],
+  "evaluation": "",
+  "format": {},
+  "layouts": {},
+  "sectionStyles": {},
+  "internships": []
 }

@@ -6,6 +6,7 @@ import {createResumeStore,StoreError} from './store.mjs';
 import {renderDocument} from '../app/render.js';
 import {createPdfService} from './pdf.mjs';
 import {listPresets} from './presets.mjs';
+import {parseStartOptions,startHelp} from './cli.mjs';
 
 const mimeTypes={'.html':'text/html; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.woff2':'font/woff2','.js':'text/javascript; charset=utf-8'};
 const json=(response,code,value)=>response.writeHead(code,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store'}).end(JSON.stringify(value));
@@ -68,7 +69,14 @@ export async function createResumeServer({projectRoot,dataRoot}){
  });
 }
 if(process.argv[1]&&path.resolve(process.argv[1])===fileURLToPath(import.meta.url)){
- const projectRoot=fileURLToPath(new URL('../',import.meta.url)),port=Number(process.env.PORT||4173),server=await createResumeServer({projectRoot,dataRoot:process.env.ZHIJIAN_DATA_DIR});
- server.on('error',error=>{console.error(error.code==='EADDRINUSE'?`端口 ${port} 已被占用，请关闭旧预览服务后重试。`:error.message);process.exitCode=1;});
- server.listen(port,'127.0.0.1',()=>console.log(`纸间 Zhijian · Resume Studio: http://127.0.0.1:${port}`));
+ try{
+  const options=parseStartOptions(process.argv.slice(2));
+  if(options.help)console.log(startHelp);
+  else{
+   const {port}=options,projectRoot=fileURLToPath(new URL('../',import.meta.url));
+   const server=await createResumeServer({projectRoot,dataRoot:process.env.ZHIJIAN_DATA_DIR});
+   server.on('error',error=>{console.error(error.code==='EADDRINUSE'?`端口 ${port} 已被占用，请使用 npm run server <其他端口> 启动。`:error.message);process.exitCode=1;});
+   server.listen(port,'127.0.0.1',()=>console.log(`纸间 Zhijian · Resume Studio: http://127.0.0.1:${server.address().port}`));
+  }
+ }catch(error){console.error(error.message);process.exitCode=1;}
 }

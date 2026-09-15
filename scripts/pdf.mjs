@@ -4,6 +4,7 @@ import {chromium} from 'playwright-core';
 import {renderDocument,themeCSS} from '../app/render.js';
 import {clone,validate,optionalStyleDefaults,styleRanges,pageBottomMargin} from '../app/model.js';
 import {migrate} from '../app/format.js';
+import {imageSlots} from '../app/images.js';
 import {StoreError} from './store.mjs';
 import {instrumentPagination,readPagination,balanceTwoPages} from './pagination.mjs';
 
@@ -17,11 +18,11 @@ export async function browserPath(){
 
 async function embedImages(data,root){
  const copy=clone(data),types={'.svg':'svg+xml','.png':'png','.jpg':'jpeg','.jpeg':'jpeg','.webp':'webp'};
- for(const key of ['logo','photo'])if(copy.profile[key].startsWith('./assets/')){
-  const assetRoot=path.resolve(root,'assets'),file=path.resolve(root,copy.profile[key]),relative=path.relative(assetRoot,file);
+ for(const {owner,key} of imageSlots(copy))if(owner[key]?.startsWith('./assets/')){
+  const assetRoot=path.resolve(root,'assets'),file=path.resolve(root,owner[key]),relative=path.relative(assetRoot,file);
   if(relative.startsWith('..')||path.isAbsolute(relative))throw new StoreError(400,'图片路径无效');
-  try{copy.profile[key]=`data:image/${types[path.extname(file).toLowerCase()]};base64,${(await readFile(file)).toString('base64')}`;}
-  catch{throw new StoreError(422,'校徽或照片文件无法读取，请重新选择图片后导出。');}
+  try{owner[key]=`data:image/${types[path.extname(file).toLowerCase()]};base64,${(await readFile(file)).toString('base64')}`;}
+  catch{throw new StoreError(422,'图片文件无法读取，请重新选择图片后导出。');}
  }
  return copy;
 }
@@ -83,7 +84,7 @@ export function createPdfService(projectRoot){
     await page.locator('#resume-theme').evaluate((node,theme)=>node.textContent=theme,themeCSS({...portable,styles,printLayout}));
     await page.evaluate(({top,bottom})=>{
      const height=297*96/25.4-top-bottom;
-     for(const entry of document.querySelectorAll('.project-entry,.education-entry,.publications li,.patents-list li,.campus-list article')){
+     for(const entry of document.querySelectorAll('.project-entry,.internship-entry,.education-entry,.publications li,.patents-list li,.campus-list article')){
       entry.removeAttribute('data-print-split');
       if(entry.getBoundingClientRect().height>height-4)entry.setAttribute('data-print-split','true');
      }
