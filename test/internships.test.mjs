@@ -78,7 +78,7 @@ test('internship rich fields, layouts and blocks remain valid after reordering a
 test('internship editor saves blocks, formats, layouts, visibility and exports JSON, HTML and PDF',async t=>{
   let executablePath;try{executablePath=await browserPath();}catch{t.skip('Install Chrome / Edge to run browser integration');return;}
   const source=fileURLToPath(new URL('../',import.meta.url)),root=await mkdtemp(path.join(os.tmpdir(),'zhijian-internship-'));
-  for(const name of ['app','assets/fonts','home.html','editor.html','styles.css'])await cp(path.join(source,name),path.join(root,name),{recursive:true});
+  for(const name of ['app','assets/brand','assets/fonts','home.html','editor.html','styles.css'])await cp(path.join(source,name),path.join(root,name),{recursive:true});
   const server=await createResumeServer({projectRoot:root});await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
   const browser=await chromium.launch({executablePath,headless:true});t.after(async()=>{await browser.close();await new Promise(resolve=>server.close(resolve));});
   const page=await browser.newPage({viewport:{width:1440,height:1050},reducedMotion:'reduce'});page.setDefaultTimeout(12000);

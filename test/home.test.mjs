@@ -13,7 +13,7 @@ test('home creates from public presets and supports cancel, restore and permanen
   try{executablePath=await browserPath();}catch{t.skip('Install Chrome / Edge to run the browser integration test');return;}
   const source=fileURLToPath(new URL('../',import.meta.url));
   const root=await mkdtemp(path.join(os.tmpdir(),'zhijian-home-'));
-  for(const name of ['app','assets/fonts','assets/photo-placeholder.svg','assets/school-placeholder.svg','home.html','editor.html','styles.css'])
+  for(const name of ['app','assets/brand','assets/fonts','assets/photo-placeholder.svg','assets/school-placeholder.svg','home.html','editor.html','styles.css'])
     await cp(path.join(source,name),path.join(root,name),{recursive:true});
   const server=await createResumeServer({projectRoot:root});
   await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));

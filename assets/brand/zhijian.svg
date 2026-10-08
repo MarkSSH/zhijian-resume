@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none" role="img" aria-labelledby="title">
+  <title id="title">纸间 Zhijian</title>
+  <rect x="6" y="3" width="21" height="27" rx="3" fill="#faf8f3" stroke="#30455e" stroke-width="2"/>
+  <path d="M11 11h11M11 16h11M11 21h7" stroke="#30455e" stroke-width="2"/>
+</svg>

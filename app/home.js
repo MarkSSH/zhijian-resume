@@ -7,8 +7,45 @@ const editorURL=id=>'/editor.html?id='+encodeURIComponent(id);
 function toast(message){$('#home-toast').textContent=message;$('#home-toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#home-toast').hidden=true,3000);}
 async function request(url,options){const response=await fetch(url,options);let result;try{result=await response.json();}catch{throw new Error('暂时无法连接工作台，请刷新重试。');}if(!response.ok)throw new Error(result.error||'操作未完成，请重试');return result;}
 function dateLabel(value){const date=new Date(value);return Number.isNaN(date.getTime())?'最近编辑':'更新于 '+new Intl.DateTimeFormat('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(date);}
+const iconPaths={
+ arrow:'M5 12h14M13 6l6 6-6 6',
+ diagonal:'M6 18 18 6M6 6h12v12',
+ edit:'m14 5 5 5M4 20l4-1L20 7a2.1 2.1 0 0 0-3-3L5 16z',
+ copy:'M9 9h11v11H9zM5 15H4V4h11v1',
+ trash:'M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v5M14 11v5',
+ clock:'M12 8v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0',
+ plus:'M12 5v14M5 12h14',
+};
+const uiIcon=name=>`<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="${iconPaths[name]}"/></svg>`;
 function render(){
- $('#resume-count').textContent=String(records.length).padStart(2,'0');$('#resume-grid').innerHTML=records.map((record,i)=>{const p=record.preview||{},accent=/^#[0-9a-f]{6}$/i.test(p.accent)?p.accent:'#30455e';return `<article class="resume-card" style="--card-index:${Math.min(i,8)}"><a class="resume-thumbnail" href="${editorURL(record.id)}" aria-label="编辑 ${e(record.name)}"><div class="mini-paper" aria-hidden="true" style="--resume-accent:${accent}"><div class="mini-name">${e(p.personName||'你的姓名')}</div><div class="mini-degree">${e(p.degree||p.major||'从这里，写下你的经历')}</div><div class="mini-rule"></div>${(p.sections?.length?p.sections:['教育背景','项目经历','科研成果']).slice(0,3).map(title=>`<div class="mini-section">${e(title)}</div><div class="mini-lines"></div><div class="mini-lines short"></div>`).join('')}</div><span class="thumbnail-caption">RESUME / ${String(i+1).padStart(2,'0')}</span></a><div class="resume-card-body"><div class="card-title-row"><h3><a href="${editorURL(record.id)}">${e(record.name)}</a></h3><button class="card-edit" data-edit="${record.id}" aria-label="修改 ${e(record.name)} 的名称和说明">修改</button></div><p class="card-description">${e(record.description||'添加一句用途说明，让不同版本更容易区分。')}</p><div class="card-footer"><time datetime="${e(record.updatedAt)}">${e(dateLabel(record.updatedAt))}</time><div class="card-actions"><button data-copy="${record.id}" aria-label="复制 ${e(record.name)}">复制一份</button><button class="card-delete" data-delete="${record.id}" aria-label="删除 ${e(record.name)}">删除</button><a href="${editorURL(record.id)}">继续编辑 ↗</a></div></div></div></article>`;}).join('')+'<button class="new-card" data-new><span aria-hidden="true">＋</span><strong>为新的方向，新建一份</strong><small>空白开始，或沿用已有内容</small></button>';
+ $('#resume-count').textContent=String(records.length).padStart(2,'0');
+ $('#resume-grid').innerHTML=records.map((record,i)=>{
+  const p=record.preview||{},accent=/^#[0-9a-f]{6}$/i.test(p.accent)?p.accent:'#30455e';
+  const name=e(record.name),id=e(record.id),href=editorURL(record.id);
+  const description=e(record.description||'添加用途说明，记下这一版要去的方向。');
+  return `<article class="resume-card" style="--card-index:${Math.min(i,8)}">
+    <a class="resume-thumbnail" href="${href}" aria-label="编辑 ${name}">
+      <span class="thumbnail-caption" aria-hidden="true">${String(i+1).padStart(2,'0')} / RESUME</span>
+      <div class="mini-paper" aria-hidden="true" style="--resume-accent:${accent}">
+        <div class="mini-name">${e(p.personName||'你的姓名')}</div>
+        <div class="mini-degree">${e(p.degree||p.major||'写下你的经历')}</div>
+        <div class="mini-rule"></div>
+        <div class="mini-section"></div><div class="mini-lines"></div><div class="mini-lines short"></div>
+        <div class="mini-section"></div><div class="mini-lines"></div><div class="mini-lines short"></div>
+      </div>
+      <span class="thumbnail-open" aria-hidden="true">${uiIcon('diagonal')}</span>
+    </a>
+    <div class="resume-card-body">
+      <div class="card-title-row"><h3><a href="${href}">${name}</a></h3><button class="card-edit" data-edit="${id}" aria-label="修改 ${name} 的名称和说明" title="修改名称与说明">${uiIcon('edit')}</button></div>
+      <p class="card-description" title="${description}">${description}</p>
+      <time class="card-updated" datetime="${e(record.updatedAt)}">${uiIcon('clock')}${e(dateLabel(record.updatedAt))}</time>
+      <div class="card-footer">
+        <div class="card-actions"><button data-copy="${id}" aria-label="复制 ${name}">${uiIcon('copy')}复制</button><button class="card-delete" data-delete="${id}" aria-label="删除 ${name}">${uiIcon('trash')}删除</button></div>
+        <a class="card-open" href="${href}" aria-label="继续编辑 ${name}">继续编辑${uiIcon('arrow')}</a>
+      </div>
+    </div>
+  </article>`;
+ }).join('')+`<button class="new-card" data-new><span class="new-paper" aria-hidden="true">${uiIcon('plus')}</span><strong>新建一份简历</strong><small>空白开始，或沿用已有内容。</small><span class="new-card-link">写下新的可能${uiIcon('arrow')}</span></button>`;
 }
 function renderTrash(){
  $('#trash-count').textContent=String(trashed.length);
